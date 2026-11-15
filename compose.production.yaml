@@ -1,0 +1,48 @@
+# Standalone configuration: use -f compose.production.yaml, without compose.yaml.
+name: netmirror-watch-party-production
+services:
+  relay:
+    build: .
+    image: netmirror-watch-party:local
+    init: true
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8787"
+      MAX_ROOMS: ${MAX_ROOMS:-1000}
+      MAX_MEMBERS: ${MAX_MEMBERS:-16}
+      MAX_CONNECTIONS: ${MAX_CONNECTIONS:-2000}
+    expose: ["8787"]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      relay:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+volumes:
+  caddy_data:
+  caddy_config:

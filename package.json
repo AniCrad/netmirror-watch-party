@@ -1,0 +1,20 @@
+{
+  "name": "netmirror-watch-party",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted playback synchronization for NetMirror: a browser extension and WebSocket relay.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --test",
+    "check": "node scripts/check.js",
+    "test:coverage": "node --test --experimental-test-coverage"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  },
+  "license": "MIT"
+}

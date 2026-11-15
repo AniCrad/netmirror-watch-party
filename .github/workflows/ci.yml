@@ -1,0 +1,52 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm test
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: docker compose config --quiet
+      - run: docker compose -f compose.production.yaml config --quiet
+        env:
+          DOMAIN: party.example.com
+          ACME_EMAIL: ci@example.com
+      - run: docker build -t netmirror-watch-party:test .
+      - run: docker run -d --name relay-test --read-only --cap-drop=ALL --security-opt=no-new-privileges -p 127.0.0.1:8787:8787 netmirror-watch-party:test
+      - name: Wait for health and verify playback transport
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8787/health; then break; fi
+            sleep 1
+          done
+          node scripts/smoke.js ws://127.0.0.1:8787
+          test "$(docker exec relay-test id -u)" = "1000"
+          docker stop --time 10 relay-test
+          test "$(docker inspect --format '{{.State.ExitCode}}' relay-test)" = "0"
+      - name: Container logs and cleanup
+        if: always()
+        run: |
+          docker logs relay-test || true
+          docker rm -f relay-test || true

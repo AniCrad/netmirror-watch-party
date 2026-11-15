@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NetMirror Watch Party</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <header><div class="logo" aria-hidden="true">▶<span>▶</span></div><div><strong>Watch Party</strong><span class="eyebrow">FOR NETMIRROR</span></div><span class="pill">BETA</span></header>
+  <main>
+    <div id="setup">
+      <div class="intro"><span class="overline">SAME SCENE. SAME SECOND.</span><h1>Movie night,<br>wherever you are.</h1><p>Bring your people. We’ll keep the video in sync.</p></div>
+      <div class="tabs" role="tablist" aria-label="Party action"><button id="host-tab" role="tab" aria-selected="true">Host a party</button><button id="join-tab" role="tab" aria-selected="false">Join friends</button></div>
+      <form id="party-form">
+        <div id="code-field" hidden><label for="code">PARTY CODE</label><input id="code" autocomplete="off" maxlength="8" placeholder="ABCD2345" spellcheck="false"></div>
+        <label for="server">RELAY ADDRESS</label><input id="server" type="url" required placeholder="ws://localhost:8787" spellcheck="false" aria-describedby="relay-help">
+        <p class="hint" id="relay-help">Everyone uses the same relay address. Run the included server to get started.</p>
+        <button class="primary" id="start" type="submit">Create a party <span aria-hidden="true">↗</span></button>
+      </form>
+      <div class="steps"><span>01 <b>Open a movie</b></span><span>02 <b>Share the code</b></span><span>03 <b>Watch together</b></span></div>
+    </div>
+    <section id="party" hidden aria-label="Your watch party">
+      <div class="live"><i id="connection-dot"></i><span id="connection">Connecting…</span><span id="members">1 person</span></div>
+      <h1 id="party-title">Your people.<br>Your movie night.</h1>
+      <p id="role-help">You control playback. Your friends follow along.</p>
+      <button id="copy" class="code-card" title="Copy party code"><span>YOUR PARTY CODE</span><strong id="party-code">········</strong><small id="copy-label">Click to copy</small></button>
+      <div class="video-status"><span class="video-icon" aria-hidden="true">▶</span><div><strong id="video-title">Looking for your video…</strong><p id="video-help">Open a movie or episode and start its player.</p></div></div>
+      <button id="focus" class="secondary">Go to party tab</button><button id="leave" class="text-button">Leave party</button>
+    </section>
+    <p id="error" class="error" role="alert" hidden></p>
+    <details><summary>Video not detected?</summary><p>Start the video first. If NetMirror uses an embedded player, enable access to that player’s site, then reload the page.</p><button id="enable" class="secondary">Enable embedded player access</button><p id="permission-status" role="status"></p></details>
+  </main>
+  <footer><span class="privacy-dot"></span> Playback sync only. Your stream stays yours.</footer>
+  <script src="index.js"></script>
+</body></html>

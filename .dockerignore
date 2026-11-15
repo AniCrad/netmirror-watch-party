@@ -1,0 +1,9 @@
+# Only files needed to build the relay enter the build context.
+*
+!Dockerfile
+!package.json
+!package-lock.json
+!server/
+!server/**
+!scripts/
+!scripts/healthcheck.js

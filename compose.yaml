@@ -1,0 +1,24 @@
+name: netmirror-watch-party
+services:
+  relay:
+    build: .
+    image: netmirror-watch-party:local
+    init: true
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8787"
+      MAX_ROOMS: ${MAX_ROOMS:-1000}
+      MAX_MEMBERS: ${MAX_MEMBERS:-16}
+      MAX_CONNECTIONS: ${MAX_CONNECTIONS:-2000}
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${RELAY_PORT:-8787}:8787"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "NetMirror Watch Party",
+  "version": "1.0.0",
+  "description": "Watch NetMirror together with synchronized play, pause, seeking, and playback speed.",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "storage",
+    "scripting",
+    "webNavigation",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://net77.cc/*",
+    "https://*.net77.cc/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "NetMirror Watch Party",
+    "default_popup": "popup/index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://net77.cc/*",
+        "https://*.net77.cc/*"
+      ],
+      "js": [
+        "content/index.js"
+      ],
+      "all_frames": true,
+      "match_origin_as_fallback": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src ws: wss:"
+  }
+}
